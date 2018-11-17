@@ -20,7 +20,7 @@ public class Calculator {
     private final String SEPARATOR = ".";
     private Stack<String> stackOperations = new Stack<>();
     private Stack<String> stackRPN = new Stack<>();
-    private boolean zeroDevisionCheck = true;
+    private boolean zeroDivisionCheck = true;
 
     public String evaluate(String statement) {
 
@@ -29,7 +29,7 @@ public class Calculator {
         if (checker(statement)) {
             Stack<String> prn = parseInfixToPrn(statement);
             Double calculatedResult = calculatePrn(prn);
-            if (zeroDevisionCheck) {answer = rounding(calculatedResult);}
+            if (zeroDivisionCheck) {answer = rounding(calculatedResult);}
         }
 
         return answer;
@@ -103,7 +103,8 @@ public class Calculator {
                     case "-": result = second - first; break;
                     case "*": result = second * first; break;
                     case "/": {
-                        if (first == 0) {zeroDevisionCheck = false;}
+                        if (first == 0) {
+                            zeroDivisionCheck = false;}
                         result = second / first;
                         break;
                     }
@@ -111,7 +112,6 @@ public class Calculator {
                 temp.push(result);
             }
         }
-
         return temp.peek();
     }
 
@@ -132,9 +132,6 @@ public class Calculator {
 
     private boolean checker(String statement) {
 
-        if (statement == null) {return false;}
-        if (statement.equals("")) {return false;}
-
         int leftParentheses = 0;
         int rightParentheses = 0;
         String prevToken = "";
@@ -154,6 +151,8 @@ public class Calculator {
         }
 
         if (leftParentheses != rightParentheses) {return false;}
+        if (statement == null) {return false;}
+        if (statement.equals("")) {return false;}
 
         return true;
     }
