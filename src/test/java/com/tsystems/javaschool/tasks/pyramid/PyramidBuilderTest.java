@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PyramidBuilderTest {
+public class  PyramidBuilderTest {
 
     private PyramidBuilder pyramidBuilder = new PyramidBuilder();
 
