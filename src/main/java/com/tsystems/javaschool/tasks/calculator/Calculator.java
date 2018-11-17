@@ -1,5 +1,6 @@
 package com.tsystems.javaschool.tasks.calculator;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -19,13 +20,19 @@ public class Calculator {
     private final String SEPARATOR = ".";
     private Stack<String> stackOperations = new Stack<>();
     private Stack<String> stackRPN = new Stack<>();
+    private boolean zeroDevisionCheck = true;
 
     public String evaluate(String statement) {
 
+        String answer = null;
 
-        //System.out.println(checkParentheses(statement));
-        System.out.println(statement);
-        return statement;
+        if (checker(statement)) {
+            Stack<String> prn = parseInfixToPrn(statement);
+            Double calculatedResult = calculatePrn(prn);
+            if (zeroDevisionCheck) {answer = rounding(calculatedResult);}
+        }
+
+        return answer;
     }
 
     private Stack<String> parseInfixToPrn(String statement) {
@@ -73,7 +80,6 @@ public class Calculator {
         }
 
         Collections.reverse(stackRPN);
-        System.out.println(stackRPN);
 
         return stackRPN;
     }
@@ -96,15 +102,60 @@ public class Calculator {
                     case "+": result = second + first; break;
                     case "-": result = second - first; break;
                     case "*": result = second * first; break;
-                    case "/": result = second / first; break;
+                    case "/": {
+                        if (first == 0) {zeroDevisionCheck = false;}
+                        result = second / first;
+                        break;
+                    }
                 }
                 temp.push(result);
             }
-
         }
-        System.out.println(temp.peek());
 
         return temp.peek();
+    }
+
+    private String rounding(Double calculatedResult) {
+
+        String rounded;
+
+        if ((calculatedResult*10)%10 == 0) {
+            int calculatedResultInt = calculatedResult.intValue();
+            rounded = String.valueOf(calculatedResultInt);
+        } else {
+            DecimalFormat round = new DecimalFormat(".####");
+            rounded = round.format(calculatedResult);
+            rounded = rounded.replace(',','.');
+        }
+        return rounded;
+    }
+
+    private boolean checker(String statement) {
+
+        if (statement == null) {return false;}
+        if (statement.equals("")) {return false;}
+
+        int leftParentheses = 0;
+        int rightParentheses = 0;
+        String prevToken = "";
+
+        StringTokenizer stringTokenizer = new StringTokenizer(statement,
+                OPERATORS + SEPARATOR + "()", true);
+
+        while (stringTokenizer.hasMoreTokens()) {
+            String token = stringTokenizer.nextToken();
+
+            if (isOpenParentheses(token)) {leftParentheses++;}
+            if (isCloseParentheses(token)) {rightParentheses++;}
+            if (isOperator(token) && isOperator(prevToken)) {return false;}
+            if (isSeparator(token) && isSeparator(prevToken)) {return false;}
+            if (token.contains(",")) {return false;}
+            prevToken = token;
+        }
+
+        if (leftParentheses != rightParentheses) {return false;}
+
+        return true;
     }
 
     private boolean isNumber(String token) {
@@ -138,28 +189,9 @@ public class Calculator {
         }
         return 2;
     }
-}
 
-
-
-    /*
-    private boolean checkParentheses(String statement) {
-        int leftParentheses = 0;
-        int rightParentheses = 0;
-        for (int i = 0; i < statement.length(); i++ ) {
-            char symbol = statement.charAt(i);
-            if (symbol == '(') {
-                leftParentheses++;
-            } else if (symbol == ')') {
-                rightParentheses++;
-            }
-            //System.out.println(symbol);
-        }
-        if (leftParentheses != rightParentheses) {
-            return false;
-        }
-        return true;
+    @Override
+    public String toString() {
+        return super.toString();
     }
-    */
-
-
+}
