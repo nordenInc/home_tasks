@@ -136,6 +136,10 @@ public class Calculator {
         int rightParentheses = 0;
         String prevToken = "";
 
+
+        if (statement == null) {return false;}
+        if (statement.equals("")) {return false;}
+
         StringTokenizer stringTokenizer = new StringTokenizer(statement,
                 OPERATORS + SEPARATOR + "()", true);
 
@@ -151,8 +155,6 @@ public class Calculator {
         }
 
         if (leftParentheses != rightParentheses) {return false;}
-        if (statement == null) {return false;}
-        if (statement.equals("")) {return false;}
 
         return true;
     }
